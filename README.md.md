@@ -1,0 +1,2 @@
+# Principles of Deep Learning Theory - Notes
+The point of this repo is to keep a documented, public resource of my journey reading through the textbook "The Principles of Deep Learning Theory". The markdown file "*The Principles of Deep Learning Theory.md*" has all my written notes in it. I also plan to implement numerical experiments to confirm some of the scaling relationships calculated by the authors.

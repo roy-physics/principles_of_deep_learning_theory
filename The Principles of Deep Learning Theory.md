@@ -1,7 +1,8 @@
+# The Principles of Deep Learning Theory
 *An Effective Theory Approach to Understanding Neural Networks*
 
 *Authors*: Daniel A. Roberts, Sho Yaida, Boris Hanin
-
+Arxiv Link: [link](https://arxiv.org/pdf/2106.10165)
 ## Chapter 0: Initialisation
 
 Much of modern successes of machine learning come from deep learning and representation learning that transforms data into increasingly refined forms helpful for extremely nonlinear tasks. 
