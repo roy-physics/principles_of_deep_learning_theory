@@ -427,6 +427,8 @@ This is very similar in form to the upper equation, but taking into account the 
 $$p(z^{(L)}|\mathcal{D}) = \int \Big[\Pi_{\mu=1}^{N_\theta}d\theta_\mu\Big]\,p(\theta)\,\Big[\,\Pi_{i=1}^{n_{L}}\Pi_{\alpha}\,\delta\Big(z_{i;\alpha}^{(L)}-f_i(x_\alpha;\theta)\Big)\,\Big]$$
 We will tackle this integral for FCNs in Chapter 4. First, in the next chapter, we will warm up by computing this distribution for deep linear networks.
 
+
+
 ## Chapter 3: Effective Theory of Deep Linear Networks at Initialisation
 This is the final warm-up chapter. We will just compute the output distribution for deep linear networks, which will introduce a bunch of the techniques and formalism we need before diving into general, nonlinear FCNs. 
 
@@ -582,3 +584,53 @@ To simplify things, let's assume constant width s.t. $n_l = n$ for all $l\geq 1$
 - Thinking about these limits separately, they do not commute. $$\lim_{n\rightarrow\infty}\lim_{L\rightarrow \infty}G_{2m}^{(L)} \neq \lim_{L\rightarrow\infty}\lim_{n\rightarrow \infty}G_{2m}^{(L)}$$ because on the LHS, the correlation function blows up before we can go to infinite width but on the RHS, the distribution becomes boring and Gaussian so the infinite depth limit is also boring and Gaussian. Thus we have a chaotic and a boring limit. 
 - We can construct an interpolating solution by sending both depth and width to infinity while keeping their ratio $r = L/n$ fixed. That is more meaningful. We can expand out the combinatorial factors in this limiting case (SEE THE TEXTBOOK FOR DETAILS) and we get the following: $$G_{2m}^{(L)}\rightarrow e^{m(m-1)r}\Big(G_2^{(L)}\Big)^m$$ With this, we see that looking at the limit of $L\rightarrow\infty$, the correlator blows up, as expected. For the limit $n\rightarrow \infty$, we get the basic Gaussian limit. 
 - If we play around with this asymptotic exponential form a little, we get the following asymptotic 4-point connected correlator: $$G_4^{(L)} - \Big(G_2^{(L)}\Big)^2 = \Big(e^{2r}-1\Big)\Big(G_2^{(L)}\Big)^2= 2r\,\Big(G_2^{(L)}\Big)^2 + \mathcal{O}(r^2)$$ Clearly, this scales linearly with the ratio $r=L/n$. We can do the same for the six-point function. $$G_6^{(L)} - 3 G_2^{(L)}G_4^{(L)} + 2\Big(G_2^{(L)}\Big)^3 = \Big(e^{6r}-3e^{2r}+2\Big)\Big(G_2^{(L)}\Big)^2= 12r^2\,\Big(G_2^{(L)}\Big)^2 + \mathcal{O}(r^3)$$ Thus, this higher order connected correlator scales like $r^2$. Thus, as we go to higher order, the connected correlators obey nearly-Gaussian statistics with higher order interaction terms in the action become weaker and weaker in the wide limit. 
+
+## Chapter 4: RG Flow of Preactivations
+*"You can hide a lot in a large-N matrix" - Steve Shenker (as told by John McGreevy)*
+
+This is first real, meaty chapter. We are going to use the formalism and idea from the previous chapter but generalise to real FCNs, not just DLNs. This is the first **real** chapter of this textbook. 
+
+### 4.1 First Layer: Goold-Old Gaussian
+We have a dataset: 
+$$\mathcal{D} = \{x_{i;\alpha}\}$$
+where $i=1,\ldots,n_0$ and $\alpha = 1,\ldots,N_{\mathcal{D}}$. The preactivations in the first layer are the following:
+$$z_{i;\alpha}^{(1)} = W_{ij}^{(1)}x_{j;\alpha} + b_i^{(1)}$$
+where we are using an Einstein summation. We will initialise the distributions for weights and biases as zero-mean Gaussians.
+$$\langle b_i^{(1)}b_j^{(1)}\rangle = \delta_{ij}C_b^{(1)}$$
+$$\langle W_{i_1 j_1}^{(1)}W_{i_2 j_2}^{(1)}\rangle = \delta_{i_1 i_2}\delta_{j_1 j_2}\frac{C_W^{(1)}}{n_0}$$
+The first layer of preactivations forms a $n_1-N_{\mathcal{D}}$ dimensional tensor, and we are interested in calculating its distribution at initialisation:
+$$p(z^{(1)}|\mathcal{D}) = p\Big(z^{(1)}(x_1),\ldots ,z^{(1)}(x_{N_{\mathcal{D}}})\Big)$$
+Let's derive this distribution two different ways: using Wick contractions and using an algebraic method.
+#### Wick this way: combinatorial derivation via correlators
+Naturally, the mean of the first layer output is zero.
+$$\langle z_{i;\alpha}^{(1)}\rangle = \langle W_{ij}^{(1)}x_{j;\alpha} + b_i^{(1)} \rangle = \langle W_{ij}^{(1)}\rangle \,x_{j;\alpha} + \langle b_i^{(1)}\rangle = 0$$
+Now, let's analyse the two-point function:
+$$\langle z_{i_1;\alpha_1}^{(1)} z_{i_2;\alpha_2}^{(1)}\rangle = \langle \,(W_{i_1 j_1}^{(1)}x_{j_1;\alpha_1} + b_{i_1}^{(1)})(W_{i_2 j_2}^{(1)}x_{j_2;\alpha_2} + b_{i_2}^{(1)}) \,\rangle$$
+$$=\langle W_{i_1 j_1}^{(1)}x_{j_1;\alpha_1}W_{i_2 j_2}^{(1)}x_{j_2;\alpha_2} \rangle \,x_{j_1;\alpha_1}x_{j_2;\alpha_2} + \langle b_{i_1}^{(1)}b_{i_2}^{(1)}\rangle$$
+$$\langle z_{i_1;\alpha_1}^{(1)} z_{i_2;\alpha_2}^{(1)}\rangle =\Bigg(C_W^{(1)}\,\frac{1}{n_0}x_{j;\alpha_1}x_{j;\alpha_2} + C_b^{(1)}\Bigg)\delta_{i_1 i_2}$$
+Let's define the quantity in brackets as our first layer metric:
+$$G_{\alpha_1 \alpha_2}^{(1)} = C_W^{(1)}\,\frac{1}{n_0}x_{j;\alpha_1}x_{j;\alpha_2} + C_b^{(1)}$$
+Thus, we can re-express the two-point function in a more compact form:
+$$\langle z_{i_1;\alpha_1}^{(1)} z_{i_2;\alpha_2}^{(1)}\rangle = G_{\alpha_1 \alpha_2}^{(1)}\,\delta_{i_1 i_2}$$
+Let's now compute the higher-order correlators similarly. 
+$$\langle z_{i_1;\alpha_1}^{(1)} z_{i_2;\alpha_2}^{(1)} z_{i_3;\alpha_3}^{(1)} z_{i_4;\alpha_4}^{(1)}\rangle =\delta_{i_1 i_2}\delta_{i_3 i_4}G_{\alpha_1 \alpha_2}^{(1)}G_{\alpha_3 \alpha_4}^{(1)} + \delta_{i_1 i_3}\delta_{i_2 i_4}G_{\alpha_1 \alpha_3}^{(1)}G_{\alpha_2 \alpha_4}^{(1)} + \delta_{i_1 i_4}\delta_{i_2 i_3}G_{\alpha_1 \alpha_4}^{(1)}G_{\alpha_2 \alpha_3}^{(1)}$$
+where we've skipped a bunch of algebra and done all the Wick contracting of the weights and biases. There's a lot of algebra but trust me, it does simplify nicely in the end (and very satisfyingly, may I say). 
+
+What's striking about this result is that it is precisely what you would expect from Wick-contracting assuming a Gaussian distribution for the first-layer outputs $z^{(1)}$. Said another way, the connected correlator vanishes:
+$$\langle z_{i_1;\alpha_1}^{(1)} z_{i_2;\alpha_2}^{(1)} z_{i_3;\alpha_3}^{(1)} z_{i_4;\alpha_4}^{(1)}\rangle|_{\rm connected} = 0$$
+Basically, the first layer output is pretty much Gaussian. To write down the action, we just need to define the inverse of the correlator:
+$$G^{\alpha_{i_1}\beta}_{(1)}G_{\beta\,\alpha_{i_2}}^{(1)} = \delta^{i_1}_{i_2}$$
+With this definition, we can compute the action:
+$$p\Big(z^{(1)}|\mathcal{D}\Big) = \frac{1}{Z}e^{-S\Big(z^{(1)}\Big)}$$
+with the Gaussian action:
+$$S\Big(z^{(1)}\Big) = \frac{1}{2}G^{\alpha \beta}_{(1)}z_{i;\alpha}^{(1)}z_{i;\beta}^{(1)}$$
+where we've used Einstein summation over the data and the first-layer output indices. We also have the following partition function:
+$$Z = \sqrt{|2\pi G^{(1)}|}$$
+where we're taking the determinant of the two-point function matrix $2 \pi G^{(1)}_{\alpha\beta}$, not the inverse matrix we use in the action.
+
+**CODE EXERCISE: SHOW THAT THIS ACTUALLY WORKS. DO THE COMPUTATION FOR THE FIRST LAYER PREACTIVATION AND SHOW THAT ODD-ORDER CORRELATORS ARE ZERO AND THE SECOND ORDER AND FOURTH ORDER CORRELATOR FOLLOW PRECISELY WHAT YOU WOULD EXPECT FROM A GAUSSIAN DISTRIBUTION OF THE FORM THAT WE POSTULATE HERE.**
+
+The textbook then derives the same result analytically using an algebraic method (the Hubbard-Stratanovich transformation). I won't cover this method. We'll stick to the brute force Wick contracting method. 
+
+
+
