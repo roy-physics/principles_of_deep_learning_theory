@@ -625,12 +625,34 @@ $$p\Big(z^{(1)}|\mathcal{D}\Big) = \frac{1}{Z}e^{-S\Big(z^{(1)}\Big)}$$
 with the Gaussian action:
 $$S\Big(z^{(1)}\Big) = \frac{1}{2}G^{\alpha \beta}_{(1)}z_{i;\alpha}^{(1)}z_{i;\beta}^{(1)}$$
 where we've used Einstein summation over the data and the first-layer output indices. We also have the following partition function:
-$$Z = \sqrt{|2\pi G^{(1)}|}$$
-where we're taking the determinant of the two-point function matrix $2 \pi G^{(1)}_{\alpha\beta}$, not the inverse matrix we use in the action.
+$$Z = \int \Bigg[\Pi_{i,\alpha}\,dz_{i;\alpha}^{(1)}\Bigg]e^{-S\Big(z^{(1)}\Big)} =  \Big({|2\pi G^{(1)}|}\Big)^{\frac{n_1}{2}}$$
+where we're taking the determinant of the two-point function matrix $2 \pi G^{(1)}_{\alpha\beta}$, not the inverse matrix we use in the action. Note that the reason that we raised things to the power of $n_1/2$ is because we integrate over all $n_1$ components of first layer output vectors; each of those integrals gives a factor of $|2\pi G^{(1)}|$ as we calculated in the pretraining chapter. 
 
 **CODE EXERCISE: SHOW THAT THIS ACTUALLY WORKS. DO THE COMPUTATION FOR THE FIRST LAYER PREACTIVATION AND SHOW THAT ODD-ORDER CORRELATORS ARE ZERO AND THE SECOND ORDER AND FOURTH ORDER CORRELATOR FOLLOW PRECISELY WHAT YOU WOULD EXPECT FROM A GAUSSIAN DISTRIBUTION OF THE FORM THAT WE POSTULATE HERE.**
 
 The textbook then derives the same result analytically using an algebraic method (the Hubbard-Stratanovich transformation). I won't cover this method. We'll stick to the brute force Wick contracting method. 
 
+#### Gaussian action in action: Computing the correlators of the first layer activation outputs
+Let's now use this action distribution we've derived to compute the expectation value of the first layer *activated* output. Consider the two-point correlator $\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle$. Note that conceptually, we are consider the activated outputs as just operators acting on the first layer outputs.
 
+$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \int \Bigg[\Pi_{i=1}^{n_1}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{j;\beta_1}z_{j;\beta_2}\Bigg)\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})$$
+$$=\int \Bigg[\Pi_{j\neq\{i_1,i_2\}}^{n_1}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{j;\beta_1}z_{j;\beta_2}\Bigg) \times$$
+$$\int \Bigg[\Pi_{i=\{i_1,i_2\}}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{i;\beta_1}z_{i;\beta_2}\Bigg)\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})$$
+
+$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \{1\}\times \delta_{i_1 i_2}\langle\,\sigma(z_{\alpha_1})\,\sigma(z_{\alpha_2})\,\rangle_{G^{(1)}}$$
+where we've separated out the parts of the integral that sum over the first layer output indices that don't match $i_1,i_2$. Those can just be integrated to 1. That leaves just the Gaussian integrals over the components $i_1,i_2$ and this is only non-zero if $i_1=i_2$, hence the delta function. We've defined the 1D gaussian mean as follows:
+$$\langle\,\mathcal{O}(z_\alpha)\,\rangle_{G^{(1)}} = \frac{1}{{\sqrt{|2\pi G^{(1)}|}}}\int \Bigg[{\Pi_\alpha dz_{\alpha}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{\beta_1}z_{\beta_2}\Bigg)\mathcal{O}(z_\alpha)$$
+where the $z$ values are essentially one-dimensional and only depend on the dataset sample indices $\alpha$. This is exactly like the typical Gaussian integrals we encountered in the pretraining chapter. Basically, this expectation value notation is supposed to be compact and ignore the output layer dimension indices, treating each output index like a 1D gaussian variable. Putting everything together, we get our final result. 
+$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \delta_{i_1 i_2}\langle\,\sigma(z_{\alpha_1})\,\sigma(z_{\alpha_2})\,\rangle_{G^{(1)}}$$
+We can also simplify this notation further by introducing the following succinct notation for the activations:
+$$\sigma(z_\alpha) = \sigma_\alpha$$
+With this, here's the succinct form of the two-point correlator:
+$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \delta_{i_1 i_2}\langle\,\sigma_{\alpha_1}\,\sigma_{\alpha_2}\,\rangle_{G^{(1)}}$$
+Awesome result!  Let's check out the four-point correlator:
+$$\langle \sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_2;\alpha_2}^{(1)})\,\sigma(z_{i_3;\alpha_3}^{(1)})\,\sigma(z_{i_4;\alpha_4}^{(1)}) \rangle = \{1\}\times$$
+$$\int \Bigg[\Pi_{i=\{i_1,i_2,i_3,i_4\}}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{i;\beta_1}z_{i;\beta_2}\Bigg)\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\sigma(z_{i_3;\alpha_3}^{(1)})\,\sigma(z_{i_4;\alpha_4}^{(1)})$$
+$$=\delta_{i_1 i_2}\delta_{i_3 i_4}\langle\sigma_{\alpha_1}\sigma_{\alpha_2}\rangle_{G^{(1)}}\langle\sigma_{\alpha_3}\sigma_{\alpha_4}\rangle_{G^{(1)}} + \delta_{i_1 i_3}\delta_{i_2 i_4}\langle\sigma_{\alpha_1}\sigma_{\alpha_3}\rangle_{G^{(1)}}\langle\sigma_{\alpha_2}\sigma_{\alpha_4}\rangle_{G^{(1)}} + \delta_{i_1 i_4}\delta_{i_2 i_3}\langle\sigma_{\alpha_1}\sigma_{\alpha_2}\rangle_{G^{(1)}}\langle\sigma_{\alpha_3}\sigma_{\alpha_4}\rangle_{G^{(1)}}$$
+where we've used the same tricks as with the two-point function and we're using the same notation. This is a pretty clean form and tells you that each neuron basically separates out. It prevents higher-order correlations because the Gaussian integrals act separately on identical neurons (that's why there are delta functions and there's no mixing amongst the different output layer indices). 
+
+**CODE TASK: VERIFY THIS ALL EMPIRICALLY WITH CODE! SHOULD BE REASONABLY SIMPLE FOR THE TWO-POINT AND FOUR-POINT FUNCTIONS. TRY THIS OUT FOR DIFFERENT ACTIVATION FUNCTIONS TOO! SIMILAR TO THE PREVIOUS TASK BUT WITH ACTUAL ACTIVATION FUNCTIONS.**
 
