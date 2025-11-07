@@ -633,26 +633,66 @@ where we're taking the determinant of the two-point function matrix $2 \pi G^{(1
 The textbook then derives the same result analytically using an algebraic method (the Hubbard-Stratanovich transformation). I won't cover this method. We'll stick to the brute force Wick contracting method. 
 
 #### Gaussian action in action: Computing the correlators of the first layer activation outputs
-Let's now use this action distribution we've derived to compute the expectation value of the first layer *activated* output. Consider the two-point correlator $\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle$. Note that conceptually, we are consider the activated outputs as just operators acting on the first layer outputs.
+Let's now use this action distribution we've derived to compute the expectation value of the first layer *activated* output. Consider the two-point correlator $\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle$. Note that conceptually, we are consider the activated outputs as just operators acting on the first layer outputs. Also, this is **not** an Einstein summation, this just is purely just looking at one node $i_1$.
 
 $$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \int \Bigg[\Pi_{i=1}^{n_1}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{j;\beta_1}z_{j;\beta_2}\Bigg)\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})$$
-$$=\int \Bigg[\Pi_{j\neq\{i_1,i_2\}}^{n_1}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{j;\beta_1}z_{j;\beta_2}\Bigg) \times$$
-$$\int \Bigg[\Pi_{i=\{i_1,i_2\}}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{i;\beta_1}z_{i;\beta_2}\Bigg)\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})$$
+$$=\int \Bigg[\Pi_{j\neq\{i_1\}}^{n_1}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{j;\beta_1}z_{j;\beta_2}\Bigg) \times$$
+$$\int \Bigg[\Pi_{i=\{i_1\}}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{i;\beta_1}z_{i;\beta_2}\Bigg)\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})$$
 
-$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \{1\}\times \delta_{i_1 i_2}\langle\,\sigma(z_{\alpha_1})\,\sigma(z_{\alpha_2})\,\rangle_{G^{(1)}}$$
-where we've separated out the parts of the integral that sum over the first layer output indices that don't match $i_1,i_2$. Those can just be integrated to 1. That leaves just the Gaussian integrals over the components $i_1,i_2$ and this is only non-zero if $i_1=i_2$, hence the delta function. We've defined the 1D gaussian mean as follows:
+$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \langle\,\sigma(z_{\alpha_1})\,\sigma(z_{\alpha_2})\,\rangle_{G^{(1)}}$$
+where we've separated out the parts of the integral that sum over the first layer output indices that don't match $i_1$. Those can just be integrated to 1. That leaves just the Gaussian integrals over the component $i_1$. We've defined the 1D gaussian mean as follows:
 $$\langle\,\mathcal{O}(z_\alpha)\,\rangle_{G^{(1)}} = \frac{1}{{\sqrt{|2\pi G^{(1)}|}}}\int \Bigg[{\Pi_\alpha dz_{\alpha}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{\beta_1}z_{\beta_2}\Bigg)\mathcal{O}(z_\alpha)$$
-where the $z$ values are essentially one-dimensional and only depend on the dataset sample indices $\alpha$. This is exactly like the typical Gaussian integrals we encountered in the pretraining chapter. Basically, this expectation value notation is supposed to be compact and ignore the output layer dimension indices, treating each output index like a 1D gaussian variable. Putting everything together, we get our final result. 
-$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \delta_{i_1 i_2}\langle\,\sigma(z_{\alpha_1})\,\sigma(z_{\alpha_2})\,\rangle_{G^{(1)}}$$
+where the $z$ values are essentially one-dimensional and only depend on the dataset sample indices $\alpha$. This is exactly like the typical Gaussian integrals we encountered in the pretraining chapter. Basically, this expectation value notation is supposed to be compact and ignore the output layer dimension indices, treating each output index like a 1D gaussian variable. Putting everything together, we get our final result (again, **no summation over $i_1$**). 
+$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle =\langle\,\sigma(z_{\alpha_1})\,\sigma(z_{\alpha_2})\,\rangle_{G^{(1)}}$$
 We can also simplify this notation further by introducing the following succinct notation for the activations:
 $$\sigma(z_\alpha) = \sigma_\alpha$$
-With this, here's the succinct form of the two-point correlator:
-$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle = \delta_{i_1 i_2}\langle\,\sigma_{\alpha_1}\,\sigma_{\alpha_2}\,\rangle_{G^{(1)}}$$
-Awesome result!  Let's check out the four-point correlator:
-$$\langle \sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_2;\alpha_2}^{(1)})\,\sigma(z_{i_3;\alpha_3}^{(1)})\,\sigma(z_{i_4;\alpha_4}^{(1)}) \rangle = \{1\}\times$$
-$$\int \Bigg[\Pi_{i=\{i_1,i_2,i_3,i_4\}}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{i;\beta_1}z_{i;\beta_2}\Bigg)\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\sigma(z_{i_3;\alpha_3}^{(1)})\,\sigma(z_{i_4;\alpha_4}^{(1)})$$
-$$=\delta_{i_1 i_2}\delta_{i_3 i_4}\langle\sigma_{\alpha_1}\sigma_{\alpha_2}\rangle_{G^{(1)}}\langle\sigma_{\alpha_3}\sigma_{\alpha_4}\rangle_{G^{(1)}} + \delta_{i_1 i_3}\delta_{i_2 i_4}\langle\sigma_{\alpha_1}\sigma_{\alpha_3}\rangle_{G^{(1)}}\langle\sigma_{\alpha_2}\sigma_{\alpha_4}\rangle_{G^{(1)}} + \delta_{i_1 i_4}\delta_{i_2 i_3}\langle\sigma_{\alpha_1}\sigma_{\alpha_2}\rangle_{G^{(1)}}\langle\sigma_{\alpha_3}\sigma_{\alpha_4}\rangle_{G^{(1)}}$$
+With this, here's the succinct form of the two-point correlator with shared indices (I'm **not** doing an Einstein summation):
+$$\langle\,\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\rangle =\langle\,\sigma_{\alpha_1}\,\sigma_{\alpha_2}\,\rangle_{G^{(1)}}$$
+Awesome result!  Let's check out the four-point correlator where, again, we **do not Einstein sum over $i_1,i_2$**, we just pick two specific indices:
+$$\langle \sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\sigma(z_{i_2;\alpha_3}^{(1)})\,\sigma(z_{i_2;\alpha_4}^{(1)}) \rangle = \{1\}\times$$
+$$\int \Bigg[\Pi_{i=\{i_1,i_2\}}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi G^{(1)}|}}\Bigg]\exp\Bigg(-\frac{1}{2}G^{\beta_1\beta_2}_{(1)}z_{i;\beta_1}z_{i;\beta_2}\Bigg)\sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\sigma(z_{i_2;\alpha_3}^{(1)})\,\sigma(z_{i_2;\alpha_4}^{(1)})$$
+$$=\langle\sigma_{\alpha_1}\sigma_{\alpha_2}\rangle_{G^{(1)}}\langle\sigma_{\alpha_3}\sigma_{\alpha_4}\rangle_{G^{(1)}}$$
 where we've used the same tricks as with the two-point function and we're using the same notation. This is a pretty clean form and tells you that each neuron basically separates out. It prevents higher-order correlations because the Gaussian integrals act separately on identical neurons (that's why there are delta functions and there's no mixing amongst the different output layer indices). 
+
+The only difference between the purely Gaussian case is the fact that there can be a non-zero fourth-order term that arises here because we are computing the correlator of nonlinear functions of the Gaussian variable $z$. Thus, if all the indices are identical, we can have a non-zero connected correlator (**again, not summing over $i_1$ here)**. 
+$$\langle \sigma(z_{i_1;\alpha_1}^{(1)})\,\sigma(z_{i_1;\alpha_2}^{(1)})\,\sigma(z_{i_1;\alpha_3}^{(1)})\,\sigma(z_{i_1;\alpha_4}^{(1)}) \rangle = \langle \sigma_{\alpha_1}\sigma_{\alpha_2}\sigma_{\alpha_3}\sigma_{\alpha_4}\rangle_{G^{(1)}}$$
+Which correlators survive and which are zero depend entirely on the form of the nonlinear function.
 
 **CODE TASK: VERIFY THIS ALL EMPIRICALLY WITH CODE! SHOULD BE REASONABLY SIMPLE FOR THE TWO-POINT AND FOUR-POINT FUNCTIONS. TRY THIS OUT FOR DIFFERENT ACTIVATION FUNCTIONS TOO! SIMILAR TO THE PREVIOUS TASK BUT WITH ACTUAL ACTIVATION FUNCTIONS.**
 
+### 4.2 Second Layer: Genesis of Non-Gaussianity
+Let's compute the second layer preactivation outputs:
+$$z_{i;\alpha}^{(2)} = W_{ij}^{(2)}\sigma_{j;\alpha}^{(1)} + b_i^{(2)}$$
+where we've introduced the notation:
+$$\sigma_{j;\alpha}^{(1)} = \sigma(z_{j;\alpha}^{(1)})$$
+We will assume, like for the first layer, that the second layer weights and biases are sampled from Gaussian distributions. The joint distribution of preactivations in the first and second layers can be written as follows:
+$$p\Big(z^{(2)},z^{(1)}|\mathcal{D}\Big)=p\Big(z^{(2)}|z^{(1)},\mathcal{D}\Big)\,p\Big(z^{(1)}|\mathcal{D}\Big)$$
+We just calculated the second PDF. Let's focus on the first part of the joint probability. 
+$$p\Big(z^{(2)}|z^{(1)},\mathcal{D}\Big) = \int \Big[\Pi_{i,j}dW_{ij}^{(2)}p\Big(W_{ij}^{(2)}\Big)\Big]\Big[\Pi_{i'}db_{i'}^{(2)}p\Big(b_{i'}^{(2)}\Big)\Big]\,\times$$
+$$\Pi_{i'',\alpha}\,\delta\Bigg(z_{i'';\alpha}^{(2)} - \Big(W_{i'' j''}^{(2)}\,\sigma_{j'';\alpha}^{(1)} + b_{i''}^{(2)}\Big)\Bigg)$$
+All we're doing here is just computing the expected distribution of second layer outputs given first layer outputs. Naturally, given a weight and bias $W_{ij}^{(2)},\, b_i^{(2)}$ and a first layer activated output, we can just analytically compute the next layer. Thus, thus PDF is just an integral over the distribution of possible second layer weights and biases, with a delta function on the second layer outputs. 
+
+What we now want is the following:
+$$p(z^{(2)}|\mathcal{D}) = \int \Bigg[\Pi_{i,\alpha}dz_{i;\alpha}^{(1)}\Bigg]\,p\Big(z^{(2)}|z^{(1)},\mathcal{D}\Big)\,p\Big(z^{(1)}|\mathcal{D}\Big)$$
+Let's compute this.
+#### Second-layer condition distribution
+The condition distribution of the second layer preactivation conditioned on the first layer isn't too hard to calculate: it's the same math as the first layer, but replacing the inputs $x_{i;\alpha}$ with $\sigma_{i;\alpha}^{(1)}$. That's all. We still have a Gaussian distribution and the following result:
+
+$$p\Big(z^{(2)}|z^{(1)}\Big) = \frac{1}{\sqrt{(|2 \pi G^{(2)}|)^{n_2}}}\exp\Bigg(-\frac{1}{2}G^{\alpha \beta}_{(2)}z_{i;\alpha}^{(1)}z_{i;\beta}^{(1)}\Bigg)$$
+where we need to compute the determinant $|2 \pi G^{(2)}_{\alpha\beta}|$ and raise it to the power of $n_2$ because the total integral is over $n_2$ components of the second layer outputs. We have also defined the second layer metric as follows:
+$$G^{(2)}_{\alpha\beta} = C_b^{(2)}+ \frac{C_W^{(2)}}{n_1}\sigma_{j;\alpha}^{(1)}\sigma_{j;\beta}^{(1)}$$
+The important point is that we're taking the output of the first layer as a given, as our conditional. Given a fixed or known output from the first layer, our probability distribution is Gaussian.
+
+However, the stochasticity or non-Gaussianity in the second layer is going to arise from the fact that there is also a distribution to the outputs from the first layer. Specifically, the kernel $G^{(2)}_{\alpha\beta}$ depends on $\sigma^{(1)}\cdot \sigma^{(1)}$ and that is stochastic. So, we can define a "mean" second layer metric:
+$$\langle\,G^{(2)}_{\alpha\beta}\,\rangle = C_W^{(2)}\frac{1}{n_1}\langle \sigma_{j;\alpha}^{(1)}\sigma_{j;\beta}^{(1)}\rangle + C_b^{(2)} = C_W^{(2)}\langle \sigma_{\alpha}^{(1)}\sigma_{\beta}^{(1)}\rangle_{G^{(1)}} + C_b^{(2)}$$
+where we've used the same notation as before. We can thus define fluctuations of the metric about this mean as follows:
+$$\Delta G^{(2)}_{\alpha\beta} = G^{(2)}_{\alpha\beta} - \langle\,G^{(2)}_{\alpha\beta}\,\rangle = C_W^{(2)}\frac{1}{n_1}\Big(\,\sigma_{j;\alpha}^{(1)}\sigma_{j;\beta}^{(1)} - n_1\langle \sigma_{\alpha}^{(1)}\sigma_{\beta}^{(1)}\rangle_{G^{(1)}}\,\Big)$$
+This deviation has zero mean by definition if we were to compute its expectation value. We can compute its respective two-point function to understand the size of the fluctuations of the metric:
+$$\Big\langle\Delta G^{(2)}_{\alpha_1\beta_1}\Delta G^{(2)}_{\alpha_2\beta_2}\Big\rangle = \Bigg(\frac{C_W^{(2)}}{n_1}\Bigg)^2\Big\langle \Big(\sigma_{j;\alpha_1}^{(1)}\sigma_{j;\beta_1}^{(1)} - n_1\langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\rangle_{G^{(1)}}\Big)\Big(\sigma_{k;\alpha_2}^{(1)}\sigma_{k;\beta_2}^{(1)} - n_1\langle \sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\rangle_{G^{(1)}}\Big) \Big\rangle$$
+$$= \Bigg(\frac{C_W^{(2)}}{n_1}\Bigg)^2\Bigg[\Big\langle \sigma_{j;\alpha_1}^{(1)}\sigma_{j;\beta_1}^{(1)}\sigma_{k;\alpha_2}^{(1)}\sigma_{k;\beta_2}^{(1)}\Big\rangle - n_1^2\langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\rangle_{G^{(1)}}\langle \sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\rangle_{G^{(1)}}\Big) \Big\rangle\Bigg]$$
+$$= \Bigg(\frac{C_W^{(2)}}{n_1}\Bigg)^2\Bigg[\Big\langle \sigma_{j;\alpha_1}^{(1)}\sigma_{j;\beta_1}^{(1)}\sigma_{k;\alpha_2}^{(1)}\sigma_{k;\beta_2}^{(1)}\Big\rangle - n_1^2\langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\rangle_{G^{(1)}}\langle \sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\rangle_{G^{(1)}}\Big) \Big\rangle\Bigg]$$
+$$= \Bigg(\frac{C_W^{(2)}}{n_1}\Bigg)^2\Bigg[\Big\langle \sigma_{j;\alpha_1}^{(1)}\sigma_{j;\beta_1}^{(1)}\sigma_{k;\alpha_2}^{(1)}\sigma_{k;\beta_2}^{(1)}\Big\rangle - n_1^2\langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\rangle_{G^{(1)}}\langle \sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\rangle_{G^{(1)}}\Big) \Big\rangle\Bigg]$$
+$$= \Bigg(\frac{C_W^{(2)}}{n_1}\Bigg)^2\Bigg[\Big\langle \sigma_{j;\alpha_1}^{(1)}\sigma_{j;\beta_1}^{(1)}\sigma_{j;\alpha_2}^{(1)}\sigma_{j;\beta_2}^{(1)}\Big\rangle - n_1\langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\rangle_{G^{(1)}}\langle \sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\rangle_{G^{(1)}}\Big) \Big\rangle\Bigg]$$
+$$\Big\langle\Delta G^{(2)}_{\alpha_1\beta_1}\Delta G^{(2)}_{\alpha_2\beta_2}\Big\rangle = \frac{\Big(C_W^{(2)}\Big)^2}{n_1}\Bigg[\Big\langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\Big\rangle_{G^{(1)}} - \langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\rangle_{G^{(1)}}\langle \sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\rangle_{G^{(1)}} \Bigg]$$
+$$\equiv \frac{1}{n_1}\,V^{(2)}_{(\alpha_1\beta_1)(\alpha_2\beta_2)}$$
+The only term that survives is the four-point connected correlator. This, naturally, is a measure of non-Gaussianity.  We will discuss this four-point correlator shortly, but notice that is scales like $\propto 1/n_1$. This is already a hint that in the extremely wide limit, the four-point connected correlator will go to zero. In the limit of infinite width, the metric fluctuations will follow the central limit theorem/large-N statistical mechanics and these fluctuations will all go to zero. 
