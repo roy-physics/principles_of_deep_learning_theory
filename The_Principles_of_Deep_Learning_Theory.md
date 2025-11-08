@@ -678,7 +678,7 @@ Let's compute this.
 #### Second-layer condition distribution
 The condition distribution of the second layer preactivation conditioned on the first layer isn't too hard to calculate: it's the same math as the first layer, but replacing the inputs $x_{i;\alpha}$ with $\sigma_{i;\alpha}^{(1)}$. That's all. We still have a Gaussian distribution and the following result:
 
-$$p\Big(z^{(2)}|z^{(1)}\Big) = \frac{1}{\sqrt{(|2 \pi G^{(2)}|)^{n_2}}}\exp\Bigg(-\frac{1}{2}G^{\alpha \beta}_{(2)}z_{i;\alpha}^{(1)}z_{i;\beta}^{(1)}\Bigg)$$
+$$p\Big(z^{(2)}|z^{(1)}\Big) = \frac{1}{\sqrt{(|2 \pi G^{(2)}|)^{n_2}}}\exp\Bigg(-\frac{1}{2}G^{\alpha \beta}_{(2)}z_{i;\alpha}^{(2)}z_{i;\beta}^{(2)}\Bigg)$$
 where we need to compute the determinant $|2 \pi G^{(2)}_{\alpha\beta}|$ and raise it to the power of $n_2$ because the total integral is over $n_2$ components of the second layer outputs. We have also defined the second layer metric as follows:
 $$G^{(2)}_{\alpha\beta} = C_b^{(2)}+ \frac{C_W^{(2)}}{n_1}\sigma_{j;\alpha}^{(1)}\sigma_{j;\beta}^{(1)}$$
 The important point is that we're taking the output of the first layer as a given, as our conditional. Given a fixed or known output from the first layer, our probability distribution is Gaussian.
@@ -696,3 +696,49 @@ $$= \Bigg(\frac{C_W^{(2)}}{n_1}\Bigg)^2\Bigg[\Big\langle \sigma_{j;\alpha_1}^{(1
 $$\Big\langle\Delta G^{(2)}_{\alpha_1\beta_1}\Delta G^{(2)}_{\alpha_2\beta_2}\Big\rangle = \frac{\Big(C_W^{(2)}\Big)^2}{n_1}\Bigg[\Big\langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\Big\rangle_{G^{(1)}} - \langle \sigma_{\alpha_1}^{(1)}\sigma_{\beta_1}^{(1)}\rangle_{G^{(1)}}\langle \sigma_{\alpha_2}^{(1)}\sigma_{\beta_2}^{(1)}\rangle_{G^{(1)}} \Bigg]$$
 $$\equiv \frac{1}{n_1}\,V^{(2)}_{(\alpha_1\beta_1)(\alpha_2\beta_2)}$$
 The only term that survives is the four-point connected correlator. This, naturally, is a measure of non-Gaussianity.  We will discuss this four-point correlator shortly, but notice that is scales like $\propto 1/n_1$. This is already a hint that in the extremely wide limit, the four-point connected correlator will go to zero. In the limit of infinite width, the metric fluctuations will follow the central limit theorem/large-N statistical mechanics and these fluctuations will all go to zero. 
+
+#### Wick Wick Wick: combinatorial derivation of the correlators of the second layer
+Let's first define the two-point correlator of the second-layer practivations.
+$$\langle z_{i_1;\alpha_1}^{(2)}z_{i_2;\alpha_2}^{(2)}\rangle = \delta_{i_1 i_2}\langle G^{(2)}_{\alpha_1\alpha_2}\rangle = \delta_{i_1 i_2}\Big(C_W^{(2)}\langle\sigma_{\alpha_1}\sigma_{\alpha_2}\rangle_{G^{(1)}} + C_b^{(2)}\Big)$$
+This form comes from the fact that our total probability distribution function is a product of $p(z^{(2)}|z^{(1)})$ and $p(z^{(1)}|\mathcal{D})$. With this method, we can also evaluate the four-point function:
+$$\langle z_{i_1;\alpha_1}^{(2)}z_{i_2;\alpha_2}^{(2)}z_{i_3;\alpha_3}^{(2)}z_{i_4;\alpha_4}^{(2)}\rangle = \delta_{i_1 i_2}\delta_{i_3 i_4} \langle G^{(2)}_{\alpha_1 \alpha_2} G^{(2)}_{\alpha_3 \alpha_4}\rangle + \delta_{i_1 i_3}\delta_{i_2 i_4} \langle G^{(2)}_{\alpha_1 \alpha_3}G^{(2)}_{\alpha_2 \alpha_4}\rangle + \delta_{i_1 i_4}\delta_{i_2 i_3} \langle G^{(2)}_{\alpha_1 \alpha_4}G^{(2)}_{\alpha_2 \alpha_3}\rangle$$
+$$=\delta_{i_1 i_2}\delta_{i_3 i_4} \langle G^{(2)}_{\alpha_1 \alpha_2}\rangle\langle G^{(2)}_{\alpha_3 \alpha_4}\rangle + \delta_{i_1 i_3}\delta_{i_2 i_4} \langle G^{(2)}_{\alpha_1 \alpha_3}\rangle\langle G^{(2)}_{\alpha_2 \alpha_4}\rangle + \delta_{i_1 i_4}\delta_{i_2 i_3} \langle G^{(2)}_{\alpha_1 \alpha_4}\rangle\langle G^{(2)}_{\alpha_2 \alpha_3}\rangle$$
+$$ + \frac{1}{n_1}\Big[\delta_{i_1 i_2}\delta_{i_3 i_4} V^{(2)}_{(\alpha_1\alpha_2)(\alpha_3\alpha_4)} + \delta_{i_1 i_3}\delta_{i_2 i_4} V^{(2)}_{(\alpha_1\alpha_3)(\alpha_2\alpha_4)}+ \delta_{i_1 i_4}\delta_{i_2 i_3} V^{(2)}_{(\alpha_1\alpha_4)(\alpha_2\alpha_3)}\Big]$$
+where, again, we've used the trick of first integrating over the conditional distribution and then over the first layer output distribution. For the second order correlation functions, we already computed them earlier for the $\langle \Delta G^{(2)}\,\Delta G^{(2)}\rangle$. We can write down the connected correlator as follows:
+$$\langle z_{i_1;\alpha_1}^{(2)}z_{i_2;\alpha_2}^{(2)}z_{i_3;\alpha_3}^{(2)}z_{i_4;\alpha_4}^{(2)}\rangle|_{\rm connected} = $$
+$$\frac{1}{n_1}\Big[\delta_{i_1 i_2}\delta_{i_3 i_4} V^{(2)}_{(\alpha_1\alpha_2)(\alpha_3\alpha_4)} + \delta_{i_1 i_3}\delta_{i_2 i_4} V^{(2)}_{(\alpha_1\alpha_3)(\alpha_2\alpha_4)}+ \delta_{i_1 i_4}\delta_{i_2 i_3} V^{(2)}_{(\alpha_1\alpha_4)(\alpha_2\alpha_3)}\Big]$$
+Once again, we see that the connected four-point correlator goes to zero in the limit of $n_1\rightarrow\infty$. 
+
+Now, the goal is to try to write down the approximate action for the second layer PDF. To do this, let's first introduce some general notation:
+#### General notation
+Earlier, we introduced notation for the expectation value of certain neuron. Now, let's generalise that to expectation values over different neural indices. 
+$$\langle\langle\,F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m}) \,\rangle\rangle_g = \int \Bigg[\Pi_{i}\frac{\Pi_\alpha dz_{i;\alpha}}{\sqrt{|2\pi g|}}\Bigg]\exp\Bigg(-\frac{1}{2}g^{\beta_1\beta_2}z_{j;\beta_1}z_{j;\beta_2}\Bigg)F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m})$$
+The double brackets show that this an expectation value that goes over neural indices $i$ as well, given a metric $g_{\alpha\beta}$. This will factorise into individal integrals over individual neural indices as we have discussed earlier. 
+
+#### Quartic Action
+Let's now use this notation to compute a general expectation value for a quartic action. Here's our example action:
+$$S(z) = \frac{1}{2}g^{\alpha_1\alpha_2}z_{i;\alpha_1}z_{i;\alpha_2} - \frac{1}{8}v^{(\alpha_1\alpha_2)(\alpha_3\alpha_4)}z_{i;\alpha_1}z_{i;\alpha_2}z_{j;\alpha_3}z_{j;\alpha_4}$$
+Note that the factor of 8 comes from the symmetry of the 1-2 and 3-4 indices which give us a $2\cdot 2\cdot 2=8$ possible symmetric combinations for a given $1-2-3-4$ combination. With this action, let's compute the form of a general expectation value:
+$$\langle\,F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m}) \,\rangle = \frac{\int \Big[\Pi_{i,\alpha}dz_{i;\alpha}\Big]e^{-S(z)}\,F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m})}{\int \Big[\Pi_{i,\alpha}dz_{i;\alpha}\Big]e^{-S(z)}}$$
+$$ = \frac{\langle\langle\,\exp\Big[\frac{1}{8}v^{(\beta_1\beta_2)(\beta_3\beta_4)}z_{i;\beta_1}z_{i;\beta_2}z_{j;\beta_3}z_{j;\beta_4}\Big]\,F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m}) \,\rangle\rangle_g}{\langle\langle\,\exp\Big[\frac{1}{8}v^{(\beta_1\beta_2)(\beta_3\beta_4)}z_{i;\beta_1}z_{i;\beta_2}z_{j;\beta_3}z_{j;\beta_4}\Big]\,\rangle\rangle_g}$$
+$$\langle\,F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m}) \,\rangle=\langle\langle\, F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m})\,\rangle\rangle_g + \frac{1}{8}v^{(\beta_1\beta_2)(\beta_3\beta_4)}\times\Bigg[$$
+$$\langle\langle z_{i;\beta_1}z_{i;\beta_2}z_{j;\beta_3}z_{j;\beta_4}\,F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m})\rangle\rangle_g - \langle\langle z_{i;\beta_1}z_{i;\beta_2}z_{j;\beta_3}z_{j;\beta_4}\rangle\rangle_g\,\langle\langle F(z_{i_1;\alpha_1},\ldots,z_{i_m;\alpha_m})\rangle\rangle_g$$
+$$\Bigg] + \mathcal{O}(v^2)$$
+This large, general formula should apply to any function $F$ assuming a quartic action. Let's test this out on some example cases. 
+$$\langle z_{i_1;\alpha_1}z_{i_2;\alpha_2}\rangle = \delta_{i_1 i_2}\Big[g_{\alpha_1\alpha_2} + \frac{1}{2}v^{(\beta_1\beta_2)(\beta_3\beta_4)}\Big(n g_{\alpha_1 \beta_1}g_{\alpha_2 \beta_2}g_{\beta_3\beta_4} + 2 g_{\alpha_1\beta_1}g_{\alpha_2\beta_3}g_{\beta_3\beta_4} \Big)\Big] + \mathcal{O}(v^2)$$
+Note that this formula comes from mixing the contracted indices between $\alpha_i$ and $\beta_i$, because any separated indices will be cancelled out by the term proportional to $\langle\langle F\rangle\rangle$ which separates both indices. The $n$ terms comes from contracting $\alpha_i$ with $\beta_i$ for $\beta_i$ pairs that are contracted in the neural indices. It forces $i=i_1=i_2$ and then there is just a sum over the $j$ neural indices. The other option is to contract $\alpha_i$ between $i$ and $j$ neural indices, which forces only two different combinations and stops a sum over neural indices. 
+
+Here, we define $g_{\alpha\beta}g^{\alpha\gamma} = \delta^\alpha_\gamma$. 
+
+Let's now compute the connected four-point correlator:
+$$\langle z_{i_1;\alpha_1}^{(2)}z_{i_2;\alpha_2}^{(2)}z_{i_3;\alpha_3}^{(2)}z_{i_4;\alpha_4}^{(2)}\rangle|_{\rm connected} = \langle z_{i_1;\alpha_1}^{(2)}z_{i_2;\alpha_2}^{(2)}z_{i_3;\alpha_3}^{(2)}z_{i_4;\alpha_4}^{(2)}\rangle| - \langle z_{i_1;\alpha_1}^{(2)}z_{i_2;\alpha_2}^{(2)}\rangle\langle z_{i_3;\alpha_3}^{(2)}z_{i_4;\alpha_4}^{(2)}\rangle - \langle z_{i_1;\alpha_1}^{(2)}z_{i_4;\alpha_4}^{(2)}\rangle\langle z_{i_2;\alpha_2}^{(2)}z_{i_3;\alpha_3}^{(2)}\rangle - \langle z_{i_1;\alpha_1}^{(2)}z_{i_3;\alpha_3}^{(2)}\rangle\langle z_{i_2;\alpha_2}^{(2)}z_{i_4;\alpha_4}^{(2)}\rangle $$
+$$= \delta_{i_1 i_2}\delta_{i_3 i_4}v^{(\beta_1\beta_2)(\beta_3\beta_4)}g_{\alpha_1 \beta_1}g_{\alpha_2 \beta_2}g_{\alpha_3 \beta_3}g_{\alpha_4\beta_4} + \delta_{i_1 i_3}\delta_{i_2 i_4}v^{(\beta_1\beta_2)(\beta_3\beta_4)}g_{\alpha_1 \beta_1}g_{\alpha_2 \beta_2}g_{\alpha_3 \beta_3}g_{\alpha_4\beta_4} + \delta_{i_1 i_4}\delta_{i_2 i_3}\ldots$$
+Comparing this to our previous answer, we find the following conditions to be true:
+$$g^{\alpha_1\alpha_2} = G_{(2)}^{\alpha_1\alpha_2} + \mathcal{O}(1/n_1)$$
+$$v^{(\alpha_1\alpha_2)(\alpha_3\alpha_4)} = \frac{1}{n_1}V_{(2)}^{(\alpha_1\alpha_2)(\alpha_3\alpha_4)} + \mathcal{O}(1/n_1^2)$$
+Thus, given that higher order correlators will be proportional to $1/n_1^2$, we have a quartic action to order $1/n_1$. 
+
+
+
+**LONG TERM PLAN: FINISH THIS CHAPTER TO GET THE CALCULATION CHOPS. SKIP NEXT CHAPTERS AND THEN DO CHAPTER 7, 8, 9, 10, 11. THOSE ARE GOING TO BE GREAT CHAPTERS FOR UNDERSTANDING LEARNING. LOTS OF MATH!!!**
+
