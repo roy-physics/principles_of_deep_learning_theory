@@ -1,4 +1,4 @@
-# The Principles of Deep Learning Theory
+# The Principles of Deep Learning Theory - Initialisation
 *An Effective Theory Approach to Understanding Neural Networks*
 
 *Authors*: Daniel A. Roberts, Sho Yaida, Boris Hanin
@@ -737,7 +737,6 @@ Comparing this to our previous answer, we find the following conditions to be tr
 $$g^{\alpha_1\alpha_2} = G_{(2)}^{\alpha_1\alpha_2} + \mathcal{O}(1/n_1)$$
 $$v^{(\alpha_1\alpha_2)(\alpha_3\alpha_4)} = \frac{1}{n_1}V_{(2)}^{(\alpha_1\alpha_2)(\alpha_3\alpha_4)} + \mathcal{O}(1/n_1^2)$$
 Thus, given that higher order correlators will be proportional to $1/n_1^2$, we have a quartic action to order $1/n_1$. 
-
 
 
 **LONG TERM PLAN: FINISH THIS CHAPTER TO GET THE CALCULATION CHOPS. SKIP NEXT CHAPTERS AND THEN DO CHAPTER 7, 8, 9, 10, 11. THOSE ARE GOING TO BE GREAT CHAPTERS FOR UNDERSTANDING LEARNING. LOTS OF MATH!!!**
