@@ -1,0 +1,21 @@
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\contentsline {part}{I\hspace {1em}Preliminaries}{2}{part.1}%
+\contentsline {section}{\numberline {2}Basic Notation for Deep, Fully Connected Networks (DFCNs)}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Activation Functions}{3}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Perceptron}{3}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Sigmoid}{3}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}Tanh}{3}{subsubsection.2.1.3}%
+\contentsline {subsubsection}{\numberline {2.1.4}Sin}{4}{subsubsection.2.1.4}%
+\contentsline {subsubsection}{\numberline {2.1.5}Scale-Invariant: Linear, ReLU, and leaky ReLU}{4}{subsubsection.2.1.5}%
+\contentsline {subsubsection}{\numberline {2.1.6}ReLU-like: softplus, SWISH, GELU}{4}{subsubsection.2.1.6}%
+\contentsline {paragraph}{Softplus}{4}{section*.2}%
+\contentsline {paragraph}{SWISH}{5}{section*.3}%
+\contentsline {paragraph}{GELU (Gaussian Error Linear Unit)}{5}{section*.4}%
+\contentsline {section}{\numberline {3}Basics of Gradient-Based Learning}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Supervised Learning}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Gradient Descent and Function Approximation}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Neural Tangent Kernel (NTK)}{7}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Neural Feature Ansatz}{8}{subsection.3.4}%
+\contentsline {part}{II\hspace {1em}Supplementary Material}{9}{part.2}%
+\contentsline {section}{\numberline {A}Some title}{9}{appendix.A}%
+\contentsline {paragraph}{Note added.}{9}{section*.6}%

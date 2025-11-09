@@ -1,0 +1,405 @@
+
+\documentclass[a4paper,12pt]{article}
+\pdfoutput=1 % if your are submitting a pdflatex (i.e. if you have
+             % images in pdf, png or jpg format)
+
+\usepackage{jheppub} % for details on the use of the package, please
+                     % see the JHEP-author-manual
+
+\makeatletter
+  % widen text block to 80% of the paper width
+  \setlength\textwidth{0.85\paperwidth}%
+  % shift margins in by 10% of the paper width
+  \setlength\oddsidemargin{0.075\paperwidth}%
+  \setlength\evensidemargin{0.075\paperwidth}%
+
+\usepackage[T1]{fontenc} % if needed
+
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+%\usepackage{bm}% bold math
+\usepackage{hyperref}% add hypertext capabilities
+%\usepackage[mathlines]{lineno}% Enable numbering of text and display math
+%\linenumbers\relax % Commence numbering lines
+%\usepackage{style}
+\usepackage{xcolor}
+\usepackage{bbm}
+\usepackage{subfiles}
+\usepackage{amsfonts}
+\usepackage{tabularx}
+\usepackage{physics}
+\usepackage{comment}
+\usepackage{listings}
+
+%\usepackage[showframe,%Uncomment any one of the following lines to test 
+%%scale=0.7, marginratio={1:1, 2:3}, ignoreall,% default settings
+%%text={7in,10in},centering,
+%%margin=1.5in,
+%%total={6.5in,8.75in}, top=1.2in, left=0.9in, includefoot,
+%%height=10in,a5paper,hmargin={3cm,0.8in},
+%]{geometry}
+
+
+% math commands
+\newcommand{\Ls}[0]{\mathcal{L}}
+\newcommand{\Xs}[0]{\mathcal{X}}
+\newcommand{\R}[0]{\mathbb{R}}
+\newcommand{\C}[0]{\mathbb{C}}
+\newcommand{\lagrangian}{\mathcal{L}}
+\newcommand{\phidot}{\Dot{\phi}}
+\newcommand{\phiddot}{\Ddot{\phi}}
+\newcommand{\xvec}{{\bf x}}
+\newcommand{\vvec}{{\bf v}}
+\newcommand{\avec}{{\bf a}}
+\newcommand{\pvec}{{\bf p}}
+\newcommand{\fstar}{f^*}
+\newcommand{\ftwiddlestar}{\Tilde{f}^*}
+\newcommand{\xvecstar}{\xvec^*}
+\newcommand{\nvec}{{\bf n}}
+\newcommand{\qvec}{{\bf q}}
+\newcommand{\Evec}{{\bf E}}
+
+\newcommand{\loss}{\mathcal{L}}
+\newcommand{\trainset}{\mathcal{A}}
+
+
+% Section counting commands
+%–– make sections subordinate to parts ––
+%\usepackage{chngcntr}
+%\counterwithin{section}{part}
+%–– have parts numbered in arabic not roman ––
+%\renewcommand\thepart{\arabic{part}}
+%–– optionally show parts in the TOC ––
+%\setcounter{tocdepth}{1}   % 1 = include parts and sections
+
+
+\def\sandip#1{\textbf{ \textcolor{orange}{[SR: {#1}]}}}
+
+
+\title{\boldmath Principles of Deep Feature Learning Theory: My Personal Notes}
+
+
+%% %simple case: 2 authors, same institution
+%% \author{A. Uthor}
+%% \author{and A. Nother Author}
+%% \affiliation{Institution,\\Address, Country}
+
+% more complex case: 4 authors, 3 institutions, 2 footnotes
+\author[a,1]{Sandip Roy,\note{Schmidt AI in Science Fellow}}
+%\author[c]{S. Econd,}
+%\author[a,2]{T. Hird\note{Also at Some University.}}
+%\author[a,2]{and Fourth}
+
+% The "\note" macro will give a warning: "Ignoring empty anchor..."
+% you can safely ignore it.
+
+\affiliation[a]{University of California San Diego,\\Gilman St, La Jolla, CA 92093}
+%\affiliation[b]{Another University,\\different-address, Country}
+%\affiliation[c]{A School for Advanced Studies,\\some-location, Country}
+
+% e-mail addresses: one for each author, in the same order as the authors
+\emailAdd{sandiproy@ucsd.edu}
+%\emailAdd{second@asas.edu}
+%\emailAdd{third@one.univ}
+%\emailAdd{fourth@one.univ}
+
+
+
+
+\abstract{
+In this set of notes, I want to record my knowledge of deep learning theory, specifically focused on the dynamics of feature learning. I will draw mainly from the nice textbook \textbf{The Principles of Deep Learning Theory} by Dan Roberts, Sho Yaida, and Boris Hanin. However, I will also draw on papers in the field and document my own empirical experiments. I intend for this to be a running set of notes and paper summaries.
+}
+
+
+
+\begin{document} 
+\maketitle
+\flushbottom
+
+
+\section{Introduction}
+\label{sec:intro}
+
+The point of these Overleaf document is just to document my thoughts on deep learning theory specifically focused on feature learning and the dynamics of learning in modern deep learning methods. 
+
+Overall, it seems to be a fundamental mystery to me how deep learning methods work. What features of the data do they learn? How do they learn these features? How does the learning process depend on the network architecture and hyperparameters? 
+
+These seem like pretty fundamental and important questions. I want to understand current literature and to see if techniques from physics can help in this effort to understand deep feature learning. This may seem ambitious but I'm sure it'll be fun!
+
+
+\part{Preliminaries}
+
+In this part of the notes, we'll go through the preliminary concepts and notation needed to understand later analysis.  
+
+
+\section{Basic Notation for Deep, Fully Connected Networks (DFCNs)}
+\label{sec:deeplearningnotation}
+
+Before moving on, let's define what exactly we mean by deep, fully connected networks (DFCNs). Let's just write down the mathematical notation we will use throughout these notes. Let's begin with the layer-by-layer representation.
+
+\begin{align}
+z_{i_1}^{(1)}(x_\alpha) &= W_{i_1 i_0}^{(1)} x_{i_0;\alpha} + b_{i_1}^{(1)}\\  
+z_{i_l}^{(l)}(x_\alpha) &= W_{i_l i_{l-1}}^{(l)} \sigma(z_{i_{l-1}}^{(l-1)}(x_\alpha)) + b_{i_l}^{(l)}
+\end{align}
+where we're using Einstein summation notation and $i_l = 1\ldots n_l$. Note that $W_{ij}^{(l)}$ isn't necessarily a square matrix; it's a $(n_l,n_{l-1})$ matrix. Specifically, $n_{l-1}$ is not necessarily the same as $n_{l}$. $L$ is the total depth of the DFCN and $n_1,\ldots, n_{L}$ are the widths of each layer of the DFCN. The depth, widths, and activation functions are examples of hyperparameters that we can choose. If we want a one-layer network $L=1$, then we don't have to worry about activation functions: We just have an affine linear function of the input data vector. For $L=2$, we have that initial affine linear layer, which gets acted on by an activation function and fed to another affine linear final layer. 
+
+With all of this, we end up with the following function approximation:
+\begin{align}
+f(x;\theta) = z^{(L)}(x)
+\end{align}
+The total number of parameters $\theta$ in the FCN is giving by the following:
+\begin{align}
+N_\theta = \sum_{l=1}^L (n_l\cdot n_{l-1} + n_l)
+\end{align}
+where the floating $n_l$ comes from the biases. We can see that the number of parameters scale quadratically with the widths and linearly with depth (at the twiddle level, the basic scaling):
+$$N_{\theta}\propto n^2 L$$
+The choice of NN architecture basically just amounts to choosing inductive biases about the form of these flexible functions and network parameters. Essentially, they amount to constraints on the relationship between weights. 
+- For computer vision, convolutional neural networks (CNNs) are common and use translation equivariance in their functional forms.
+- Natural language processing (NLP) often uses transformers (think ChatGPT, etc.). These architectures encourage long-range correlations between language elements in embedding spaces, a property known as attention. 
+
+Much of the calculation in this textbook can be done for different architectures by simply replacing our FCN iteration equations with those of the other architectures. We may show these functional forms explicitly for CNNs, transformers, ResNets, etc. in the appendices but we'll focus on FCNs for all the main calculations. 
+
+Before moving on, I want to point out that there's already a large degeneracy in the parameter space with large $n$. Specifically, if we consider the weights in a given layer, $W_{ij}^{(l)}$, multiplied by the weights for the previous layer $W_{jk}^{(l-1)}$, notice that there is a dummy/summed index $j$. Thus, we can permute the $j$ indices however we like and we get the exact same result. You can permute those indices $n_l!$ different ways. Note that this doesn't care about whether there's an activation function acting on one of the weight matrices (as there typically will be), because you still sum over those indices. As you chain together more layers, you continually multiply by $n_{l-1}!$ for every $l$. That is an enormous degeneracy!
+$$\textrm{degeneracy in $\theta$} = \Pi_{l=1}^{L-1}\,(n_l!)$$
+
+
+\subsection{Activation Functions}
+
+Let's go through different choices for the activation function $\sigma(z)$ and their basic mathematical properties.
+
+\subsubsection{Perceptron}
+\begin{align}
+\sigma(z)=
+\begin{cases}
+1, & z \ge 0,\\
+0, & z < 0 .
+\end{cases}
+\end{align}
+It either fires or not. It's either 1 or 0. Historically significant but not very used nowadays.
+
+\subsubsection{Sigmoid}
+\begin{align}
+\sigma(z) = \frac{1}{1 + e^{-z}} = \frac{1}{2}\Bigg(1+\tanh\Big(\frac{z}{2}\Big)\Bigg)
+\end{align}
+This is a smooth, differentiable function. It has the limits $\sigma\rightarrow 0$ for $z\rightarrow -\infty$ and $\sigma\rightarrow 1$ for $z\rightarrow \infty$. At the origin, $\sigma(0) = 1/2$. Not very used nowadays because it doesn't cross the origin at 0.
+
+\subsubsection{Tanh}
+\begin{align}
+\sigma(z) = \tanh(z) = \frac{e^z - z^{-z}}{e^z + e^{-z}} = \frac{e^{2z} - 1}{e^{2z}+1}
+\end{align}
+Also, nice, smooth, and differentiable. As $z\rightarrow -\infty$, $\sigma(z)\rightarrow -1$ and as $z\rightarrow \infty$, $\sigma(z)\rightarrow 1$. At $z=0$, it crosses the origin $\sigma(0) = 0$. It is a very popular choice nowadays aside from the ReLU. 
+
+\subsubsection{Sin}
+\begin{align}
+\sigma(z) = \sin(z)
+\end{align}
+Cool for periodic functions, but not super popular nowadays. 
+
+
+\subsubsection{Scale-Invariant: Linear, ReLU, and leaky ReLU}
+
+This is any activation function that has the form:
+\begin{align}
+\sigma(\lambda z) = \lambda \sigma(z)
+\end{align}
+To achieve this, we use the following form:
+$$
+\sigma(z)=
+\begin{cases}
+a_+ z, & z \geq 0,\\
+a_- z, & z < 0 .
+\end{cases}
+$$
+\begin{itemize}
+\item Linear function: $a_-=a_+=1$
+\item ReLU: $a_- = 0$, $a_+ = 1$
+\item Leaky ReLU: $a_-=a$ for some small $a < 1$. $a_+ = 1$. This is like ReLU but allows some small, non-zero slope for negative $z$. 
+\end{itemize}
+
+ReLU is by far the most popular activation function. It will form the basis of the theory in this book but, as always, you can rederive a bunch of this theory for other choices of activation function. 
+
+Now, why is this called scale-invariant? Fundamentally, a scale-invariant function is one for which zooming in and out of the input variable space doesn't change the shape of the function at all. Think of the basic linear function $\sigma(z) = z$. You can scale the input space $z\rightarrow \lambda z$ which will amount to shrinking or stretching the input axis depending on the value of $\lambda$, but $\sigma(\lambda z) = \lambda z$. It looks exactly the same in the stretched/shrunken input space (just replace $\lambda z\equiv x$ and you get $\sigma(x) = x$, boring). Same thing with ReLU, leaky ReLU. Note that if we translate the function, it no longer has this nice property. But we only care about scaling the input space, not translating it. 
+
+The other activation functions we've looked at are not scale-invariant. The reach a certain threshold $|z|$ value and the information saturates. This doesn't happen for ReLU, leaky ReLU, or the linear function. 
+
+Final note: Linear activations are boring. We want non-linear activations, not linear ones. 
+
+\subsubsection{ReLU-like: softplus, SWISH, GELU}
+
+These arise to make ReLU differentiable and smooth at the origin. 
+
+\paragraph{Softplus}: 
+\begin{align}
+\sigma(z) = \log(1 + e^z)
+\end{align}
+This is is 0 in the limit $z\rightarrow -\infty$, it is $\log(2)$ at $z=0$, and it's linear $\sigma(z)\approx z$ in the limit $z\rightarrow \infty$.
+ 
+\paragraph{SWISH}: 
+\begin{align}
+\sigma(z) = \frac{z}{1 + e^{-z}}
+\end{align}
+This is 0 at the origin, becomes linear $\sigma(z)\approx z$ as $z\rightarrow \infty$, and approaches 0 in the limit $z\rightarrow -\infty$. Note that it does go negative for $z<0$ but when $|z|$ is not large.
+
+\paragraph{GELU (Gaussian Error Linear Unit)}
+\begin{align}
+\sigma(z) = \Bigg[\frac{1}{2} + \frac{1}{2}\textrm{erf}\bigg(\frac{z}{\sqrt{2}}\bigg)\Bigg]
+\end{align}
+where $$\textrm{erf}(z) = \frac{2}{\sqrt{\pi}}\int_0^z dt\,e^{-t^2}$$
+is the Gaussian error function, a partial integration of a unit-Gaussian distribution (the factor of 2 is because it's symmetric about $-z$ and $z$). This is very similar to the SWISH activation function. 
+
+Note that all these three choices, in smoothing the ReLU, break scale-invariance. 
+
+
+\section{Basics of Gradient-Based Learning}
+\label{sec:gradient_based_learning}
+
+Gradient-based learning is the fundamental basis for all modern deep learning methods. An important player in this game is the neural tangent kernel (NTK) which we will explore in detail. It was first explored in a seminal paper [Jacot et al. (2018)](https://arxiv.org/abs/1806.07572) in the context of infinite width networks. This chapter is an introductory one. It comes from my notes on Chapter 7 in \textit{The Principles of Deep Learning Theory} (PoDLT). 
+
+\subsection{Supervised Learning}
+We want a network, given a set of inputs $x_\alpha$ and outputs $y_\alpha$ to learn a good function to approximate $z(x_\alpha;\theta)\approx y_\alpha$, where $\alpha$ is the data sample index, not the data dimensionality index. First, we define a loss function:
+\begin{align}
+\mathcal{L}(z(x_\alpha;\theta),y_\alpha)
+\end{align}
+A common loss is the mean squared error (MSE) loss:
+\begin{align}
+\mathcal{L}_{\rm MSE}(z(x_\alpha;\theta),y_\alpha) = \frac{1}{2}\Big[z(x_\alpha;\theta)-y_\alpha\Big]^2
+\end{align}
+where $z(x_\alpha;\theta)$ is our flexible function based on parameters $\theta$. For much of our analysis, this function will be a fully connected network (FCN) aka a multilayer perceptron (MLP).
+
+Basically, this loss function is just the negative log likelihood of a Gaussian distribution. Ideally, we want to adjust the model parameters $\theta$ to minimise the loss averaged over the entire training data distribution.
+\begin{align}
+\langle \mathcal{L}(\theta)\rangle = \int dx \,dy\,p(x,y)\,\mathcal{L}(z(x;\theta),y)
+\end{align}
+In practice, we don't have access to the true distribution of $x,y$, we only have a finite sampling with our training data, so we minimise the following sampling:
+\begin{align}
+\mathcal{L}_{\mathcal{A}}(\theta) = \sum_\alpha \mathcal{L}(z(x_\alpha;\theta),y_\alpha)\end{align}
+where $\mathcal{A}$ is the training data distribution. What we want is to the find the best $\theta$ to minimise this total training loss:
+\begin{align}
+\theta^* = \textrm{arg min}_\theta\, \mathcal{L}_{\mathcal{A}}(\theta)
+\end{align}
+Ideally, we really want our network to pick parameters $\theta^*$ that maximise the true expected loss, not just memorise the sampled training data distribution. This property, of performing well on the general distribution and not just on the training distribution, is called **generalisation**. We always need to be worried about whether the training dataset $\mathcal{A}$ is biased, or has too high variance to properly learn. To this end, we often have a separate dataset $(x_{\dot{\beta}},y_{\dot{\beta}})\in \mathcal{B}$ which is our test set. The model has not seen this data so it's a good way of probing whether the model has generalised or just memorised the training distribution. We will define the loss over the test data as $\mathcal{L}_{\mathcal{B}}$. 
+
+
+
+\subsection{Gradient Descent and Function Approximation}
+
+The idea behind gradient descent is just to calculate the gradient of the loss function w.r.t. parameters $\theta_\mu$ and update those parameters incrementally in the direction of decreasing loss i.e. the direction of decreasing gradient. Thus, updates look like the following:
+\begin{align}
+\theta_\mu(t+1) = \theta_\mu(t) - \eta \,\left.\pdv{\loss_\trainset}{\theta_\mu}\right|_{\theta_\mu(t)}
+\end{align}
+where $\eta$ is the learning rate and $t$ is the learning step. This is pretty simple. 
+
+For sufficiently small learning steps, the loss is guaranteed to decrease (assuming non-zero loss). Let's expand the loss perturbative to see this. 
+\begin{align}
+\Delta \mathcal{L} = \mathcal{L}(\theta(t+1)) - \mathcal{L}(\theta(t)) \approx \left.\pdv{\loss_\trainset}{\theta_\mu}\right|_{t} \pdv{\theta_\mu}{t} + \mathcal{O}(\eta^2) = -\eta \,\left.\pdv{\loss_\trainset}{\theta_\mu}\right|_{t}\left.\pdv{\loss_\trainset}{\theta_\mu}\right|_{t}+\mathcal{O}(\eta^2)
+\end{align}
+where we Einstein sum over over the $\mu$ parameter indices. That is quadratic in the loss derivative so the change in loss is negative for sufficiently small $\eta$. 
+
+The idea is to iterate over these small updates to eventually reach a stable minimum of the training loss. However, doing so is challenging and there are several variants of this training algorithm. One extremely popular variance is stochastic gradient descent (SGD) where we update following this algorithm:
+\begin{align}
+\theta_\mu(t+1) = \theta_\mu(t) - \eta\sum_{\mathcal{S}_t} \,\left.\pdv{\loss_{\mathcal{S}_t}}{\theta_\mu}\right|_{\theta_\mu(t)}
+\end{align}
+where $\mathcal{S}_t \subset \mathcal{A}$ is a \emph{batch} and is a subset of the total training data distribution $\trainset$. Batches may get shuffled with each time step or \emph{epoch}, hence the $t$ index on the batch. What's nice about SGD is that the random selection of batches actually provides a regularisation mechanism because the network sees different data samples during every epoch i.e. it can't just learn to optimise the entire training dataset, it has to actually learn good parameters for every random batch. 
+
+Final note: A more general way of writing the gradient update rule is as follows:
+\begin{align}
+\theta_\mu(t+1) = \theta_\mu(t) - \eta \,\lambda_{\mu\nu}\left.\pdv{\loss_\trainset}{\theta_\nu}\right|_{\theta_\nu(t)}
+\end{align}
+where $\lambda_{\mu\nu}$ is a learning rate tensor that tells us how the gradient w.r.t. parameter $\theta_\nu$ is used to update parameter $\theta_\mu$. For the traditional case, $\lambda_{\mu\nu} = \delta_{\mu\nu}$ (so the identity matrix). We can thus rewrite our change in loss:
+\begin{align}
+\Delta \mathcal{L} =  -\eta \,\lambda_{\mu\nu}\left.\pdv{\loss_\trainset}{\theta_\mu}\right|_{t}\left.\pdv{\loss_\trainset}{\theta_\nu}\right|_{t}+\mathcal{O}(\eta^2)
+\end{align}
+Naturally, we want this tensor $\lambda_{\mu\nu}$ to be positive semi-definite s.t. the loss decreases in general for small learning rates (i.e. the eigenvalues are positive so that each step decreases the loss).
+
+\subsection{Neural Tangent Kernel (NTK)}
+There is another structure which naturally arises from this optimisation process. Consider the gradient of the loss. 
+\begin{align}
+\frac{d\mathcal{L}_{\mathcal{A}}}{d\theta_\mu} = \frac{\partial\mathcal{L}_{\mathcal{A}}}{\partial z_{i;\alpha}}\frac{d z_{i;\alpha}}{d\theta_\mu}
+\end{align}
+where $i$ are the output dimension indices and $\alpha$ are the training dataset sample indices and we are doing an Einstein sum. $z_{i;\alpha}$ is the network output w.r.t data sample input $x_\alpha$. With this chain rule, let's rewrite our change in the loss:
+\begin{align}
+\Delta \mathcal{L}_{\mathcal{A}} = -\eta \,\Bigg[\frac{\partial\mathcal{L}_{\mathcal{A}}}{\partial z_{i_1;\alpha_1}}\frac{\partial\mathcal{L}_{\mathcal{A}}}{\partial z_{i_2;\alpha_2}}\Bigg]\Bigg[\lambda_{\mu\nu}\frac{d z_{i_1;\alpha_1}}{d\theta_\mu}\frac{d z_{i_2;\alpha_2}}{d\theta_\nu}\Bigg] + \mathcal{O}(\eta^2)
+\end{align}
+The first quantity is the function approximation error i.e. how sensitive is the loss w.r.t. the NN function outputs. For MSE, this tensor looks like the following:
+\begin{align}
+\frac{\partial\mathcal{L}_{\mathcal{A}}}{\partial z_{i;\alpha}} = z_i(x_\alpha;\theta) -  y_{i;\alpha} \equiv \epsilon_{i;\alpha}
+\end{align}
+where we've defined the error tensor $\epsilon_{i\alpha}$. 
+
+The second quantity in the change of the loss is called the neural tangent kernel (NTK). 
+\begin{align}
+H_{i_1 i_2;\alpha_1\alpha_2} = \lambda_{\mu\nu}\frac{d z_{i_1;\alpha_1}}{d\theta_\mu}\frac{d z_{i_2;\alpha_2}}{d\theta_\nu}
+\end{align}
+where we sum over the parameter indices. This NTK structure is a function of the output dimension and the datasample indices. This tensor can be computed for the training dataset but also for other datasets. It's a pretty large tensor and already, you can see that it's going to be pretty numerically challenging to compute. It is a four-dimensional tensor with two output dimension indices $i_1,i_2$ and two data sample indices $\alpha_1,\alpha_2$. That's a lot of indices!
+
+The NTK is the main driver of the function-approximation dynamics. To see this, consider a general observable of the model's outputs ${\Theta}(z(x_{\delta_i};\theta),\ldots,z(x_{\delta_M};\theta))$ where $x_{\delta_i}\in \mathcal{D}$ is some general dataset. We can calculate the change of this observable quantity as the network is updated:
+\begin{align}
+{\Theta}(\theta_{t+1}) - {\Theta}(\theta_t) &\approx \frac{\partial {\Theta}}{\partial z_{i;\delta}}\frac{\partial z_{i;\delta}}{\partial \theta_\mu}\frac{\partial \theta_\mu}{\partial t} + \mathcal{O}(\eta^2)\\
+&\approx -\eta\,\frac{\partial {\Theta}}{\partial z_{i;\delta}}\frac{\partial \mathcal{L}}{\partial z_{j;\alpha}}\,\lambda_{\mu\nu}\frac{\partial z_{i;\delta}}{\partial \theta_\mu}\frac{\partial z_{j;\alpha}}{\partial \theta_\nu} + \mathcal{O}(\eta^2)\\
+\therefore {\Theta}(\theta_{t+1}) - {\Theta}(\theta_t)&\approx -\eta\,\frac{\partial {\Theta}}{\partial z_{i;\delta}}\frac{\partial \mathcal{L}}{\partial z_{j;\alpha}}\,H_{ij;\delta\alpha} + \mathcal{O}(\eta^2)
+\end{align}
+where $\delta\in\mathcal{D}$ and $\alpha\in\mathcal{A}$. The NTK basically arises whenever we want to compute the change in a quantity w.r.t. a parameter update. It will thus always involve the training dataset as well as the dataset for which one is evaluating the change on. This comes from the following general formula:
+\begin{align}
+\frac{d\theta_\mu}{dt} = -\eta\,\lambda_{\mu\nu}\frac{\partial z_{i;\alpha}}{\partial \theta_\nu}\,\epsilon_{i;\alpha}
+\end{align}
+where $\epsilon_{i;\alpha}$ is the error tensor defined above and $\alpha\in\trainset$.
+
+Thus, the NTK is important because it gives us insight into the ability for a network output or an observable to change with training or, said another way, for the network to learn something from the training dataset $\mathcal{A}$. If we think about the NTK's indices, the diagonal entries determine the sensitivity of the function w.r.t. a specific input datapoint. The off-diagonal entries, however, show the ability for one datapoint to influence a separate datapoint in terms of the output. The off-diagonal entries determine generalisation.  
+
+\subsection{Neural Feature Ansatz}
+\newcommand{\agop}{\mathcal{T}}
+This isn't in the textbook, but I'm adding it because I want to understand this other structure in terms of the NTK and the evolution of parameters. In Misha Belkin's nice paper "\emph{Mechanism of feature learning in deep fully connected networks and ...}" (Arxiv:2212.13881). They define an important object known as the average gradient outer product (AGOP). We will denote the AGOP tensor as $\agop_{ij}^{(l)}$. 
+
+
+
+
+
+
+
+
+
+
+\newpage
+\part{Supplementary Material}
+\label{sec:appendices}
+\appendix
+\section{Some title}
+Please always give a title also for appendices.
+
+
+
+
+
+\acknowledgments
+
+This is the most common positions for acknowledgments. A macro is
+available to maintain the same layout and spelling of the heading.
+
+\paragraph{Note added.} This is also a good position for notes added
+after the paper has been written.
+
+
+
+
+
+% The bibliography will probably be heavily edited during typesetting.
+% We'll parse it and, using the arxiv number or the journal data, will
+% query inspire, trying to verify the data (this will probalby spot
+% eventual typos) and retrive the document DOI and eventual errata.
+% We however suggest to always provide author, title and journal data:
+% in short all the informations that clearly identify a document.
+
+\begin{thebibliography}{99}
+
+
+
+% Please avoid comments such as "For a review'', "For some examples",
+% "and references therein" or move them in the text. In general,
+% please leave only references in the bibliography and move all
+% accessory text in footnotes.
+
+% Also, please have only one work for each \bibitem.
+
+
+\end{thebibliography}
+\end{document}
